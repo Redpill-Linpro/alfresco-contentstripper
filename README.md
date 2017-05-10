@@ -13,6 +13,7 @@ The content paths listed are
 include content from a particular site in the path list. Example: /alfresco/service/admin/excludelist?shortName=testsite will return 
 something like:
 
+```text
 2016/10/18/15/16/fb4a374d-1fe3-4a4e-a16d-df2544f5864c.bin
 2016/10/18/15/16/536f0e41-17e6-479e-805a-2bf7c95363d9.bin
 2016/10/18/15/16/b0537345-1ace-473c-9c14-9b42f03e2e91.bin
@@ -21,6 +22,7 @@ something like:
 2016/10/18/15/16/9e6749fb-d41a-4586-8e83-467e03517e53.bin
 2016/10/18/15/16/59485495-c409-43ed-9752-be89b975930b.bin
 2016/10/18/15/16/d80fcd79-8235-46ae-aaf3-65c814f288ef.bin
+```
 
 Building & Installation
 ------------
