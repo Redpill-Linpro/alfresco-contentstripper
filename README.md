@@ -59,8 +59,14 @@ Maven repository:
 </repository>
 ```
 
-The jar files are also downloadable from: https://maven.redpill-linpro.com/nexus/index.html#nexus-search;quick~alfresco-systemmessages
+The jar files are also downloadable from: https://maven.redpill-linpro.com/nexus/index.html#nexus-search;quick~alfresco-contentstripper
 
+# Instructions for deployment
+
+ * Add the dependency instructed above
+ * Make sure python is installed in the environment that contains the content store path.
+ * Put the mkdtrunc.py script in the environment where it has access to the content store. (make it executable)
+ 
 
 License
 -------
@@ -70,14 +76,4 @@ This application is licensed under the LGPLv3 License. See the [LICENSE file](LI
 Authors
 -------
 
-Erik Billerby - Redpill Linpro AB
-
-
-# Instructions for deployment
-
- * Add the dependency instructed above
- * Make sure python is installed in the environment that contains the content store path.
- * Put the mkdtrunc.py script in the environment where it has access to the content store. (make it executable)
- 
-  
- 
+Erik Billerby - Redpill Linpro AB  
