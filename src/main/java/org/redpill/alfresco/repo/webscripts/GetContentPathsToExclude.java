@@ -21,6 +21,8 @@ import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.log4j.Logger;
+import org.redpill.alfresco.repo.domain.KeystoreFileLocationDAOImpl;
+import org.redpill.alfresco.repo.domain.KeystoreFileLocationEntity;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
@@ -30,8 +32,8 @@ import org.springframework.util.Assert;
 
 /**
  * Webscript that returns file paths to the contentstore for content properties
- * that needs to be preserved when running the alfresco-contentstripper python script
- * that is distributed within this project.
+ * that needs to be preserved when running the alfresco-contentstripper python
+ * script that is distributed within this project.
  * 
  * By default all content in the dataDictionary is preserved toghether with the
  * cm:preferenceValues of all users.
@@ -52,6 +54,7 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 	ContentService contentService;
 	NamespaceService namespaceService;
 	DictionaryService dictionaryService;
+	KeystoreFileLocationDAOImpl keystoreFileLocationDAO;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -61,6 +64,7 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 		Assert.notNull(contentService, "you must provide an instance of ContentService");
 		Assert.notNull(namespaceService, "you must provide an instance of NamespaceService");
 		Assert.notNull(dictionaryService, "you must provide an instance of DictionaryService");
+		Assert.notNull(keystoreFileLocationDAO, "you must provide an instance of KeystoreFileLocationDAOImpl");
 	}
 
 	@Override
@@ -118,6 +122,13 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 			}
 		}
 
+		// Get the keystore file location
+		KeystoreFileLocationEntity keystoreLocation = keystoreFileLocationDAO.executeSearchQuery();
+
+		if (keystoreLocation != null) {
+			model.put("keystoreNode", keystoreLocation.getKeystoreContentUrl());
+		}
+		
 		model.put("personNodes", personNodes);
 
 		List<String> siteNodes = new ArrayList<>();
@@ -130,7 +141,8 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 				results = searchService.query(sp);
 				for (ResultSetRow row : results) {
 					try {
-						// check if the nodeRef is of type cm:content or inherits from
+						// check if the nodeRef is of type cm:content or
+						// inherits from
 						// cm:content
 						QName type = nodeService.getType(row.getNodeRef());
 						if (type.equals(ContentModel.TYPE_CONTENT)
@@ -196,6 +208,10 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
+	}
+
+	public void setKeystoreFileLocationDAO(KeystoreFileLocationDAOImpl keystoreFileLocationDAO) {
+		this.keystoreFileLocationDAO = keystoreFileLocationDAO;
 	}
 
 }

@@ -21,6 +21,7 @@
     <property name="contentService" ref="ContentService" />
     <property name="namespaceService" ref="NamespaceService" />
     <property name="dictionaryService" ref="DictionaryService" />
+    <property name="keystoreFileLocationDAO" ref="keystoreFileLocationDAO" />
   </bean>
   
 </beans>
