@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -73,6 +74,7 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 
 		String shortName = req.getParameter("shortName");
 		String dictionaryNodesQuery = "PATH:\"/app:company_home/app:dictionary//*\"";
+		String surfConfigNodesQuery = "PATH:\"/app:company_home/st:sites/cm:surf-config//*\"";
 		String personNodesQuery = "TYPE:\"cm:person\"";
 
 		SearchParameters sp = new SearchParameters();
@@ -107,6 +109,34 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 		}
 		model.put("dictionaryNodes", dictionaryNodes);
 
+		sp.setQuery(surfConfigNodesQuery);
+		results = searchService.query(sp);
+		List<String> surfConfigNodes = new ArrayList<>();
+
+		// The dashboard nodes are not indexed, so we need nodeService-calls
+		for (ResultSetRow row : results) {
+			try {
+
+				List<NodeRef> allFiles = listAllFileNodesDeep(row.getNodeRef(), new ArrayList<NodeRef>());
+
+				for (NodeRef file : allFiles) {
+					// check if the nodeRef is of type cm:content or inherits
+					// from
+					// cm:content
+					QName type = nodeService.getType(file);
+					if (type.equals(ContentModel.TYPE_CONTENT)
+							|| dictionaryService.isSubClass(type, ContentModel.TYPE_CONTENT)) {
+						surfConfigNodes.add(getContentUrl(file, ContentModel.PROP_CONTENT));
+					}
+				}
+			} catch (Exception e) {
+				logger.warn("An unhandled exception occurred when resolving content url to surf-config node. nodeRef: "
+						+ row.getNodeRef(), e);
+			}
+		}
+		System.out.println("total number of surfConfigNodes: " + surfConfigNodes.size());
+		model.put("surfConfigNodes", surfConfigNodes);
+
 		sp.setQuery(personNodesQuery);
 		results = searchService.query(sp);
 
@@ -128,7 +158,7 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 		if (keystoreLocation != null) {
 			model.put("keystoreNode", keystoreLocation.getKeystoreContentUrl());
 		}
-		
+
 		model.put("personNodes", personNodes);
 
 		List<String> siteNodes = new ArrayList<>();
@@ -163,6 +193,22 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 		}
 		model.put("siteNodes", siteNodes);
 		return model;
+	}
+
+
+	private List<NodeRef> listAllFileNodesDeep(NodeRef nodeRef, List<NodeRef> allDeep) {
+
+		QName type = nodeService.getType(nodeRef);
+		if (ContentModel.TYPE_FOLDER.equals(type)) {
+			for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(nodeRef)) {
+				listAllFileNodesDeep(childAssoc.getChildRef(), allDeep);
+			}
+		} else if (dictionaryService.isSubClass(type, ContentModel.TYPE_CONTENT)) {
+			allDeep.add(nodeRef);
+		}else {
+		}
+
+		return allDeep;
 	}
 
 	public String getContentUrl(final NodeRef nodeRef, final QName propertyQName) throws Exception {

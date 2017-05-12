@@ -4,6 +4,9 @@ ${keystoreNode?replace('store://?', '', 'r')}
 <#list dictionaryNodes as d>
 ${d?replace('store://?', '', 'r')}
 </#list>
+<#list surfConfigNodes as sc>
+${sc?replace('store://?', '', 'r')}
+</#list>
 <#list siteNodes as s>
 ${s?replace('store://?', '', 'r')}
 </#list>
