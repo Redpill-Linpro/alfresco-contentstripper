@@ -6,7 +6,10 @@ with the small dataset of a development environment. This way you can transfer a
 
 The content paths listed are 
  * All content in Company Home/Data Dictionary
+ * The keystore file stored in system store that is validated during repository bootstrap
+ * The Alfresco license file - if present.
  * All preference values of all users
+ * All surf-configuration nodes, ie dashboard configurations.
  * If a site is provided: all content in the site
  
  The tool is exposed as a webscript on /alfresco/service/admin/excludelist you could also add the optional parameter site to
@@ -35,7 +38,7 @@ Repository dependency:
 <dependency>
   <groupId>org.redpill-linpro.alfresco.contentstripper</groupId>
   <artifactId>alfresco-contentstripper</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
@@ -47,7 +50,7 @@ Platform/Repository module (parent pom):
 <moduleDependency>
   <groupId>org.redpill-linpro.alfresco.contentstripper</groupId>
   <artifactId>alfresco-contentstripper</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </moduleDependency>
 ```
 
@@ -65,7 +68,12 @@ The jar files are also downloadable from: https://maven.redpill-linpro.com/nexus
 
  * Add the dependency instructed above
  * Make sure python is installed in the environment that contains the content store path.
+ 
+ 
+# Instructions for running
+
  * Put the mkdtrunc.py script in the environment where it has access to the content store. (make it executable)
+ * run it with the help switch to get instructions ie ```python mkdtrunc.py -h```
  
 
 License
@@ -77,3 +85,4 @@ Authors
 -------
 
 Erik Billerby - Redpill Linpro AB  
+Inspiration from old Alfresco-Tooling project https://github.com/Redpill-Linpro/Alfresco-Tooling
