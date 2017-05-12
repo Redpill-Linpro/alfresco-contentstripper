@@ -14,8 +14,14 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 	
-  <bean id="webscript.org.redpill-linpro.alfresco.content.exclude-list.get" class="org.redpill.alfresco.repo.webscripts.GetContentPathsToExclude" parent="webscript">
-    <property name="contentStripperService" ref="contentStripperService" />
+  <bean id="contentStripperService" class="org.redpill.alfresco.repo.service.ContentStripperServiceImpl" >
+    <property name="searchService" ref="SearchService" />
+    <property name="nodeService" ref="NodeService" />
+    <property name="siteService" ref="SiteService" />
+    <property name="contentService" ref="ContentService" />
+    <property name="namespaceService" ref="NamespaceService" />
+    <property name="dictionaryService" ref="DictionaryService" />
+    <property name="fileLocationDAO" ref="fileLocationDAO" />
   </bean>
   
 </beans>
