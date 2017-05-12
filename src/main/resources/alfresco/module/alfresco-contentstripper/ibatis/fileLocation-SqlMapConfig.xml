@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<typeAliases>
+		<typeAlias alias="ContentUrl" type="org.redpill.alfresco.repo.domain.FileLocationEntity"/>
+	</typeAliases>
+	
+	   <mappers>
+        <!-- Location of file in contentstore -->
+        <mapper resource="alfresco/module/${project.artifactId}/ibatis/#resource.dialect#/fileLocation-SqlMap.xml"/>
+        
+      </mappers>
+</configuration>
