@@ -2,7 +2,7 @@ package org.redpill.alfresco.repo.domain;
 
 import org.mybatis.spring.SqlSessionTemplate;
 
-public class KeystoreFileLocationDAOImpl {
+public class FileLocationDAOImpl {
 
 	protected SqlSessionTemplate template;
 	
@@ -10,8 +10,8 @@ public class KeystoreFileLocationDAOImpl {
 		this.template = template;
 	}
 	
-	public KeystoreFileLocationEntity executeSearchQuery(){
-		KeystoreFileLocationEntity result = (KeystoreFileLocationEntity) template.selectOne("select_keystore_location_query");
+	public FileLocationEntity executeSearchQuery(String localName){
+		FileLocationEntity result = (FileLocationEntity) template.selectOne("select_file_location_query", localName);
 		return result;
 	}
 }

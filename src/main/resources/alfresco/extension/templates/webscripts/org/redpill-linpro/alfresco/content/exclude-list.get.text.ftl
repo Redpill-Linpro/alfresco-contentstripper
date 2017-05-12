@@ -1,6 +1,9 @@
 <#if keystoreNode??>
 ${keystoreNode?replace('store://?', '', 'r')}
 </#if>
+<#if licenseNode??>
+${licenseNode?replace('store://?', '', 'r')}
+</#if>
 <#list dictionaryNodes as d>
 ${d?replace('store://?', '', 'r')}
 </#list>

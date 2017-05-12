@@ -2,19 +2,19 @@
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
 <beans>
 
-	<bean id="keystoreFileLocationSqlSessionFactory" class="org.alfresco.ibatis.HierarchicalSqlSessionFactoryBean">
+	<bean id="fileLocationSqlSessionFactory" class="org.alfresco.ibatis.HierarchicalSqlSessionFactoryBean">
 		<property name="resourceLoader" ref="dialectResourceLoader" />
 		<property name="dataSource" ref="dataSource" />
 		<property name="configLocation">
-			<value>classpath:alfresco/module/${project.artifactId}/ibatis/keystoreFileLocation-SqlMapConfig.xml</value>
+			<value>classpath:alfresco/module/${project.artifactId}/ibatis/fileLocation-SqlMapConfig.xml</value>
 		</property>
 	</bean>
    
-    <bean id="keystoreFileLocationSqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
-        <constructor-arg index="0" ref="keystoreFileLocationSqlSessionFactory"/>
+    <bean id="fileLocationSqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="fileLocationSqlSessionFactory"/>
     </bean>
     
-    <bean id="keystoreFileLocationDAO" class="org.redpill.alfresco.repo.domain.KeystoreFileLocationDAOImpl">
-    	<property name="template" ref="keystoreFileLocationSqlSessionTemplate"/>
+    <bean id="fileLocationDAO" class="org.redpill.alfresco.repo.domain.FileLocationDAOImpl">
+    	<property name="template" ref="fileLocationSqlSessionTemplate"/>
     </bean>
 </beans>

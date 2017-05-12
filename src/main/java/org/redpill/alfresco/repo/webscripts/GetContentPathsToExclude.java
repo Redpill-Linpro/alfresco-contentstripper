@@ -22,8 +22,8 @@ import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.log4j.Logger;
-import org.redpill.alfresco.repo.domain.KeystoreFileLocationDAOImpl;
-import org.redpill.alfresco.repo.domain.KeystoreFileLocationEntity;
+import org.redpill.alfresco.repo.domain.FileLocationDAOImpl;
+import org.redpill.alfresco.repo.domain.FileLocationEntity;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
@@ -55,7 +55,7 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 	ContentService contentService;
 	NamespaceService namespaceService;
 	DictionaryService dictionaryService;
-	KeystoreFileLocationDAOImpl keystoreFileLocationDAO;
+	FileLocationDAOImpl fileLocationDAO;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -65,7 +65,7 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 		Assert.notNull(contentService, "you must provide an instance of ContentService");
 		Assert.notNull(namespaceService, "you must provide an instance of NamespaceService");
 		Assert.notNull(dictionaryService, "you must provide an instance of DictionaryService");
-		Assert.notNull(keystoreFileLocationDAO, "you must provide an instance of KeystoreFileLocationDAOImpl");
+		Assert.notNull(fileLocationDAO, "you must provide an instance of FileLocationDAOImpl");
 	}
 
 	@Override
@@ -152,11 +152,20 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 			}
 		}
 
-		// Get the keystore file location
-		KeystoreFileLocationEntity keystoreLocation = keystoreFileLocationDAO.executeSearchQuery();
+		// Get the keystore file location by its local_name in the alf_qname
+		// table
+		FileLocationEntity keystoreLocation = fileLocationDAO.executeSearchQuery("keyStore");
 
 		if (keystoreLocation != null) {
-			model.put("keystoreNode", keystoreLocation.getKeystoreContentUrl());
+			model.put("keystoreNode", keystoreLocation.getContentUrl());
+		}
+
+		// Get the license file location by its local_name in the alf_qname
+		// table
+		FileLocationEntity licenseFileLocation = fileLocationDAO.executeSearchQuery("versionEdition");
+
+		if (licenseFileLocation != null) {
+			model.put("licenseNode", licenseFileLocation.getContentUrl());
 		}
 
 		model.put("personNodes", personNodes);
@@ -195,7 +204,6 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 		return model;
 	}
 
-
 	private List<NodeRef> listAllFileNodesDeep(NodeRef nodeRef, List<NodeRef> allDeep) {
 
 		QName type = nodeService.getType(nodeRef);
@@ -205,7 +213,7 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 			}
 		} else if (dictionaryService.isSubClass(type, ContentModel.TYPE_CONTENT)) {
 			allDeep.add(nodeRef);
-		}else {
+		} else {
 		}
 
 		return allDeep;
@@ -256,8 +264,8 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 		this.dictionaryService = dictionaryService;
 	}
 
-	public void setKeystoreFileLocationDAO(KeystoreFileLocationDAOImpl keystoreFileLocationDAO) {
-		this.keystoreFileLocationDAO = keystoreFileLocationDAO;
+	public void setFileLocationDAO(FileLocationDAOImpl fileLocationDAO) {
+		this.fileLocationDAO = fileLocationDAO;
 	}
 
 }
