@@ -56,8 +56,11 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 
 		model.put("dictionaryNodes", dictionaryNodes);
 
-		List<String> surfConfigNodes = contentStripperService.getSurfContigNodes();
-		model.put("surfConfigNodes", surfConfigNodes);
+		List<String> surfConfigUserNodes = contentStripperService.getSurfConfigUserNodes();
+		model.put("surfConfigUserNodes", surfConfigUserNodes);
+
+		List<String> surfConfigSiteNodes = contentStripperService.getSurfConfigSiteNodes();
+		model.put("surfConfigSiteNodes", surfConfigSiteNodes);
 
 		List<String> personNodes = contentStripperService.getPersonPreferenceValuesNodes();
 		model.put("personNodes", personNodes);

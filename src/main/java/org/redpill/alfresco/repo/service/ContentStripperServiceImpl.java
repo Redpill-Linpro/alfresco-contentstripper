@@ -1,9 +1,12 @@
 package org.redpill.alfresco.repo.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -24,7 +27,6 @@ import org.redpill.alfresco.repo.domain.FileLocationDAOImpl;
 import org.redpill.alfresco.repo.domain.FileLocationEntity;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
-
 
 public class ContentStripperServiceImpl implements ContentStripperService, InitializingBean {
 	private static final Logger logger = Logger.getLogger(ContentStripperServiceImpl.class);
@@ -64,7 +66,7 @@ public class ContentStripperServiceImpl implements ContentStripperService, Initi
 	}
 
 	@Override
-	public List<String> getSurfContigNodes() {
+	public List<String> getSurfConfigUserNodes() {
 		String surfConfigNodesQuery = "PATH:\"/app:company_home/st:sites/cm:surf-config//*\"";
 
 		SearchParameters sp = new SearchParameters();
@@ -94,6 +96,64 @@ public class ContentStripperServiceImpl implements ContentStripperService, Initi
 			} catch (Exception e) {
 				logger.warn("An unhandled exception occurred when resolving content url to surf-config node. nodeRef: "
 						+ row.getNodeRef(), e);
+			}
+		}
+
+		return surfConfigNodes;
+	}
+
+	@Override
+	public List<String> getSurfConfigSiteNodes() {
+
+		// Get all shortNames
+		NodeRef sitesRoot = siteService.getSiteRoot();
+		Set<QName> allSiteTypes = new HashSet<QName>(dictionaryService.getSubTypes(SiteModel.TYPE_SITE, true));
+		List<ChildAssociationRef> sites = nodeService.getChildAssocs(sitesRoot,
+				allSiteTypes);
+
+		logger.info("Number of sites found: " + sites.size());
+		List<String> surfConfigNodes = new ArrayList<>();
+		for (ChildAssociationRef siteRef : sites) {
+
+			String surfConfigNodesQuery = "PATH:\"/app:company_home/st:sites/cm:"
+					+ nodeService.getProperty(siteRef.getChildRef(), ContentModel.PROP_NAME) + "/cm:surf-config//*\"";
+
+			SearchParameters sp = new SearchParameters();
+			sp.setLanguage(SearchService.LANGUAGE_LUCENE);
+			sp.addStore(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE);
+
+			sp.setQuery(surfConfigNodesQuery);
+			
+			if (logger.isTraceEnabled()){
+				logger.trace("executing query: "+ surfConfigNodesQuery);
+			}
+			ResultSet results = searchService.query(sp);
+			if (logger.isTraceEnabled()){
+				logger.trace("found "+ results.length()+" root surf config nodes in "+nodeService.getProperty(siteRef.getChildRef(), ContentModel.PROP_NAME));
+			}
+			// The dashboard nodes are not indexed, so we need nodeService-calls
+			for (ResultSetRow row : results) {
+				try {
+
+					List<NodeRef> allFiles = listAllFileNodesDeep(row.getNodeRef(), new ArrayList<NodeRef>());
+
+					for (NodeRef file : allFiles) {
+						// check if the nodeRef is of type cm:content or
+						// inherits
+						// from
+						// cm:content
+						QName type = nodeService.getType(file);
+						if (type.equals(ContentModel.TYPE_CONTENT)
+								|| dictionaryService.isSubClass(type, ContentModel.TYPE_CONTENT)) {
+							surfConfigNodes.add(getContentUrl(file, ContentModel.PROP_CONTENT));
+						}
+					}
+				} catch (Exception e) {
+					logger.warn(
+							"An unhandled exception occurred when resolving content url to surf-config node. nodeRef: "
+									+ row.getNodeRef(),
+							e);
+				}
 			}
 		}
 
