@@ -7,8 +7,11 @@ ${licenseNode?replace('store://?', '', 'r')}
 <#list dictionaryNodes as d>
 ${d?replace('store://?', '', 'r')}
 </#list>
-<#list surfConfigNodes as sc>
+<#list surfConfigUserNodes as sc>
 ${sc?replace('store://?', '', 'r')}
+</#list>
+<#list surfConfigSiteNodes as scs>
+${scs?replace('store://?', '', 'r')}
 </#list>
 <#list siteNodes as s>
 ${s?replace('store://?', '', 'r')}
