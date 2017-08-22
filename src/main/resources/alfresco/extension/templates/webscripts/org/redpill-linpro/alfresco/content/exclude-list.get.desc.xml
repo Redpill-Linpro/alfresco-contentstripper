@@ -1,9 +1,9 @@
 <webscript>
    <shortname>Get a list of content urls</shortname>
    <description>
-      The URLs returned are for content in Data Dictionary, and any site provided. This is the content needed to preserve consistency.
+      The URLs returned are for content in Data Dictionary, and any site provided (if more than one separate short names with pipe "|"). This is the content needed to preserve consistency.
    </description>
-   <url>/admin/excludelist?site={site?}</url>
+   <url>/admin/excludelist?shortName={shortName?}</url>
    <format default="text">argument</format>
    <authentication>admin</authentication>
    <transaction allow="readonly">required</transaction>
