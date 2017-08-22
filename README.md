@@ -38,7 +38,7 @@ Repository dependency:
 <dependency>
   <groupId>org.redpill-linpro.alfresco.contentstripper</groupId>
   <artifactId>alfresco-contentstripper</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
 </dependency>
 ```
 
@@ -50,7 +50,7 @@ Platform/Repository module (parent pom):
 <moduleDependency>
   <groupId>org.redpill-linpro.alfresco.contentstripper</groupId>
   <artifactId>alfresco-contentstripper</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
 </moduleDependency>
 ```
 
