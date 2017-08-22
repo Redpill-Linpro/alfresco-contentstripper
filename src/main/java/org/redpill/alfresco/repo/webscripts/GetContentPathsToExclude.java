@@ -1,6 +1,7 @@
 package org.redpill.alfresco.repo.webscripts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +85,14 @@ public class GetContentPathsToExclude extends DeclarativeWebScript implements In
 		List<String> siteNodes = new ArrayList<>();
 
 		if (shortName != null && shortName.length() > 0) {
-			siteNodes = contentStripperService.getSiteNodes(shortName);
+			if (shortName.contains("|")){
+				List<String> shortNames = Arrays.asList(shortName.split("\\|"));
+				for (String name : shortNames){
+					siteNodes.addAll(contentStripperService.getSiteNodes(name));
+				}
+			}else{
+				siteNodes = contentStripperService.getSiteNodes(shortName);
+			}
 		}
 		model.put("siteNodes", siteNodes);
 		return model;
