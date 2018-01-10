@@ -36,9 +36,9 @@ SDK 1 and SDK 2
 Repository dependency:
 ```xml
 <dependency>
-  <groupId>org.redpill-linpro.alfresco.contentstripper</groupId>
+  <groupId>org.redpill-linpro.alfresco</groupId>
   <artifactId>alfresco-contentstripper</artifactId>
-  <version>1.1.1</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
@@ -48,9 +48,9 @@ SDK 3
 Platform/Repository module (parent pom):
 ```xml
 <moduleDependency>
-  <groupId>org.redpill-linpro.alfresco.contentstripper</groupId>
+  <groupId>org.redpill-linpro.alfresco</groupId>
   <artifactId>alfresco-contentstripper</artifactId>
-  <version>1.1.1</version>
+  <version>1.2.0</version>
 </moduleDependency>
 ```
 
