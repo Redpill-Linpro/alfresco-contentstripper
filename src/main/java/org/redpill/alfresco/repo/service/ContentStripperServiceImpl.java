@@ -1,5 +1,6 @@
 package org.redpill.alfresco.repo.service;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.ISO9075;
 import org.apache.log4j.Logger;
 import org.redpill.alfresco.repo.domain.FileLocationDAOImpl;
 import org.redpill.alfresco.repo.domain.FileLocationEntity;
@@ -114,9 +116,11 @@ public class ContentStripperServiceImpl implements ContentStripperService, Initi
 		logger.info("Number of sites found: " + sites.size());
 		List<String> surfConfigNodes = new ArrayList<>();
 		for (ChildAssociationRef siteRef : sites) {
-
+            Serializable propName = nodeService.getProperty(siteRef.getChildRef(), ContentModel.PROP_NAME);
+            String encodedSiteName = ISO9075.encode(propName.toString());
+            
 			String surfConfigNodesQuery = "PATH:\"/app:company_home/st:sites/cm:"
-					+ nodeService.getProperty(siteRef.getChildRef(), ContentModel.PROP_NAME) + "/cm:surf-config//*\"";
+					+ encodedSiteName + "/cm:surf-config//*\"";
 
 			SearchParameters sp = new SearchParameters();
 			sp.setLanguage(SearchService.LANGUAGE_LUCENE);
@@ -180,18 +184,20 @@ public class ContentStripperServiceImpl implements ContentStripperService, Initi
 		}
 		List<String> dictionaryNodes = new ArrayList<>();
 		for (ResultSetRow row : results) {
-			try {
+			if (nodeService.getProperty(row.getNodeRef(), ContentModel.PROP_CONTENT) != null) {
+				try {
 
-				// check if the nodeRef is of type cm:content or inherits from
-				// cm:content
-				QName type = nodeService.getType(row.getNodeRef());
-				if (type.equals(ContentModel.TYPE_CONTENT)
-						|| dictionaryService.isSubClass(type, ContentModel.TYPE_CONTENT)) {
-					dictionaryNodes.add(getContentUrl(row.getNodeRef(), ContentModel.PROP_CONTENT));
+					// check if the nodeRef is of type cm:content or inherits from
+					// cm:content
+					QName type = nodeService.getType(row.getNodeRef());
+					if (type.equals(ContentModel.TYPE_CONTENT)
+							|| dictionaryService.isSubClass(type, ContentModel.TYPE_CONTENT)) {
+						dictionaryNodes.add(getContentUrl(row.getNodeRef(), ContentModel.PROP_CONTENT));
+					}
+				} catch (Exception e) {
+					logger.warn("An unhandled exception occurred when resolving content url to dictionary node. nodeRef: "
+							+ row.getNodeRef(), e);
 				}
-			} catch (Exception e) {
-				logger.warn("An unhandled exception occurred when resolving content url to dictionary node. nodeRef: "
-						+ row.getNodeRef(), e);
 			}
 		}
 
@@ -210,13 +216,15 @@ public class ContentStripperServiceImpl implements ContentStripperService, Initi
 
 		List<String> personNodes = new ArrayList<>();
 		for (ResultSetRow row : results) {
-			try {
-				personNodes.add(getContentUrl(row.getNodeRef(), ContentModel.PROP_PREFERENCE_VALUES));
-			} catch (Exception e) {
-				logger.warn(
-						"An unhandled exception occurred when resolving content url to preference values for a user. nodeRef: "
-								+ row.getNodeRef(),
-						e);
+			if (nodeService.getProperty(row.getNodeRef(), ContentModel.PROP_PREFERENCE_VALUES) != null) {
+				try {
+					personNodes.add(getContentUrl(row.getNodeRef(), ContentModel.PROP_PREFERENCE_VALUES));
+				} catch (Exception e) {
+					logger.warn(
+							"An unhandled exception occurred when resolving content url to preference values for a user. nodeRef: "
+									+ row.getNodeRef(),
+							e);
+				}
 			}
 		}
 
