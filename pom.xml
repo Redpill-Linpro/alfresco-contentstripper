@@ -5,7 +5,7 @@
 
 	<groupId>org.redpill-linpro.alfresco</groupId>
 	<artifactId>alfresco-contentstripper</artifactId>
-	<version>1.2.0-SNAPSHOT</version>
+	<version>1.3.0-SNAPSHOT</version>
 	<name>alfresco-contentstripper Platform Jar Module - SDK 3</name>
 	<description>Platform JAR Module (to be included in the alfresco.war) - SDK 3</description>
 	<packaging>jar</packaging>
